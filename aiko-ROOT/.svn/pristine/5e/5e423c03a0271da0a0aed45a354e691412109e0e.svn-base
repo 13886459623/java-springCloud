@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycb.mapper.Alarm_aMapper">
+  <resultMap id="BaseResultMap" type="com.ycb.domain.Alarm_a">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="pz_key" jdbcType="VARCHAR" property="pzKey" />
+    <result column="pz_value" jdbcType="INTEGER" property="pzValue" />
+    <result column="pz_content" jdbcType="VARCHAR" property="pzContent" />
+    <result column="remake" jdbcType="VARCHAR" property="remake" />
+  </resultMap>
+
+  <select id="getAlarmAList" resultMap="BaseResultMap" parameterType="java.util.Map">
+    select * from alarm_a
+    LIMIT #{cPage},#{pSize}
+  </select>
+
+  <select id="getAlarmACount" resultType="java.lang.Integer">
+    select count(1) from alarm_a
+  </select>
+
+  <insert id="insert" parameterType="com.ycb.domain.Alarm_a">
+    insert into alarm_a (id, pz_key, pz_value, 
+      pz_content, remake)
+    values (#{id,jdbcType=INTEGER}, #{pzKey,jdbcType=VARCHAR}, #{pzValue,jdbcType=INTEGER}, 
+      #{pzContent,jdbcType=VARCHAR}, #{remake,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ycb.domain.Alarm_a">
+    insert into alarm_a
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="pzKey != null">
+        pz_key,
+      </if>
+      <if test="pzValue != null">
+        pz_value,
+      </if>
+      <if test="pzContent != null">
+        pz_content,
+      </if>
+      <if test="remake != null">
+        remake,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="pzKey != null">
+        #{pzKey,jdbcType=VARCHAR},
+      </if>
+      <if test="pzValue != null">
+        #{pzValue,jdbcType=INTEGER},
+      </if>
+      <if test="pzContent != null">
+        #{pzContent,jdbcType=VARCHAR},
+      </if>
+      <if test="remake != null">
+        #{remake,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <select id="getKeyList" resultMap="BaseResultMap" parameterType="java.util.Map">
+      select t.* from alarm_a t
+  </select>
+	
+  <select id="getKeyByvalue" resultMap="BaseResultMap" parameterType="java.util.Map">
+      select t.*
+      from alarm_a t
+      <where>
+          1=1
+          <if test="params.key!=null and params.key!=null ">
+              and t.pz_key=#{params.key}
+          </if>
+      </where>
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ycb.domain.Alarm_a" >
+    update alarm_a
+    <set >
+      <if test="pzKey != null" >
+        pz_key = #{pzKey,jdbcType=VARCHAR},
+      </if>
+      <if test="pzValue != null" >
+        pz_value = #{pzValue,jdbcType=INTEGER},
+      </if>
+      <if test="pzContent != null" >
+        pz_content = #{pzContent,jdbcType=VARCHAR},
+      </if>
+      <if test="remake != null" >
+        remake = #{remake,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycb.mapper.restart_messageMapper">
+  <resultMap id="BaseResultMap" type="com.ycb.domain.restart_message">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="exename" jdbcType="VARCHAR" property="exename" />
+    <result column="exepath" jdbcType="VARCHAR" property="exepath" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="creattime" jdbcType="TIMESTAMP" property="creattime" />
+    <result column="count" jdbcType="INTEGER" property="count" />
+    
+  </resultMap>
+  <insert id="insert" parameterType="com.ycb.domain.restart_message">
+    insert into restart_message (id, exename, exepath, 
+      type, creattime)
+    values (#{id,jdbcType=INTEGER}, #{exename,jdbcType=VARCHAR}, #{exepath,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{creattime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ycb.domain.restart_message">
+    insert into restart_message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="exename != null">
+        exename,
+      </if>
+      <if test="exepath != null">
+        exepath,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="creattime != null">
+        creattime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="exename != null">
+        #{exename,jdbcType=VARCHAR},
+      </if>
+      <if test="exepath != null">
+        #{exepath,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="creattime != null">
+        #{creattime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+     <select id="getTtimeList" resultMap="BaseResultMap" parameterType="java.util.Map">
+	select 
+	a.exename,
+	COUNT(a.exename) as count
+	from  restart_message a
+		<where>
+		    1=1
+			<if test="params.startTime!=null and params.endTime!=null ">
+				and a.creattime BETWEEN #{params.startTime} and #{params.endTime}
+			</if>
+		</where> 
+		GROUP BY a.exename
+	</select>
+  
+</mapper>

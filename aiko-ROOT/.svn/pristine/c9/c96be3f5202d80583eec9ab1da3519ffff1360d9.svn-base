@@ -1,0 +1,37 @@
+package com.ycb.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.ycb.domain.config_a;
+import com.ycb.domain.details_list;
+import com.ycb.domain.details_listExample;
+import com.ycb.mapper.config_aMapper;
+import com.ycb.mapper.details_listMapper;
+
+@Service
+@Transactional
+public class ConfigService {
+	@Autowired
+	private config_aMapper configADao;
+
+	/**
+	 *	分页
+	 * @param params      查询条件
+	 * @param currentPage 当前页码
+	 * @param pageSize    每页记录数
+	 * @return            
+	 */
+	public List<config_a> getConfigAList(Map<String,Object> params,int cPage,int pSize){
+		params.put("cPage", cPage);
+		params.put("pSize", pSize);
+		return configADao.getConfigAList(params);
+	}
+}

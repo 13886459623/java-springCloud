@@ -1,0 +1,22 @@
+package com.ycb.mapper;
+
+import com.ycb.domain.config_b;
+import com.ycb.domain.config_bExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+
+public interface config_bMapper {
+    long countByExample(config_bExample example);
+
+    int deleteByExample(config_bExample example);
+
+    int insert(config_b record);
+
+    int insertSelective(config_b record);
+
+    List<config_b> selectByExample(config_bExample example);
+
+    int updateByExampleSelective(@Param("record") config_b record, @Param("example") config_bExample example);
+
+    int updateByExample(@Param("record") config_b record, @Param("example") config_bExample example);
+}

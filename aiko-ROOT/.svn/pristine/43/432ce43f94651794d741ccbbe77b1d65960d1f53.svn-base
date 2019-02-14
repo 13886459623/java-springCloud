@@ -1,0 +1,98 @@
+package com.ycb.controller.system;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import com.ycb.util.AjaxObject;
+
+/** 
+ * @author 作者 : aknb206
+ * @version 创建时间：2017年5月11日 下午5:25:17 
+ * 类说明 
+ */
+@Controller
+public class IndexController {
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	
+	
+	//公司门户信息页面
+	@RequestMapping(value="/home/news")
+	public String news(){
+		return "home/news";
+	}
+	
+	//展示系统应用页面
+	@RequestMapping(value="/home/apps")
+	public String apps(){
+		return "home/apps";
+	}
+	
+	
+	@RequestMapping(value="/home/changePassword")
+	public String changePasswordView() {
+		return "home/changePassword";
+	}
+	
+//	@RequestMapping(value="/user/savePassword")
+//	@ResponseBody
+//	public AjaxObject savePassword(
+//			@RequestParam(name="userid",required=false) String userid,
+//			@RequestParam(name = "oldPass", required = false) String oldPass,
+//			@RequestParam(name = "newPass", required = false) String newPass
+//	){
+//		return aikoBaseService.savePassword(userid, oldPass, newPass);
+//	}
+	
+	//根据缓存session中的菜单获取父级应用
+		@RequestMapping(value="/home/appdata")
+		@ResponseBody
+		public AjaxObject appdata(){
+			AjaxObject returnVal=new AjaxObject();
+			try{
+				Map<String, Object> data = new HashMap<String, Object>(1);
+				
+//				List<Map<Object, Object>> applist=SystemApi.getCurrentApps();
+				List<Map<Object, Object>> applist=new ArrayList<>();
+				Map<Object, Object> map1 = new HashMap<>();
+				map1.put("index_url", "/aiko-ROOT/page/showImageA.jsp");
+				map1.put("app_icon", "");
+				map1.put("code", "sort");
+				map1.put("des", "前端页面");
+				map1.put("iconfont", "xe62a;");
+				map1.put("name", "前端页面");
+				map1.put("id", "1");
+				map1.put("shortname", "前端页面");
+				map1.put("status", "1");
+				map1.put("target", "_self");
+				
+				Map<Object, Object> map2 = new HashMap<>();
+				map2.put("index_url", "javascript: void(0);");
+				map2.put("app_icon", "");
+				map2.put("code", "system");
+				map2.put("des", "参数配置");
+				map2.put("iconfont", "xe6ca;");
+				map2.put("name", "参数配置");
+				map2.put("id", "1");
+				map2.put("shortname", "参数配置");
+				map2.put("status", "1");
+				map2.put("target", "_self");
+				applist.add(map1);
+				applist.add(map2);
+				data.put("applist", applist);
+				returnVal.success(data);
+				
+			}catch (Throwable e) {
+				returnVal.fail();
+			}
+			return returnVal;
+			
+		}
+}

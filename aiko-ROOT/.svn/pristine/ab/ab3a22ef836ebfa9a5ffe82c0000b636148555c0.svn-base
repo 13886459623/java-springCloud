@@ -1,0 +1,169 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>AI智能分选</title>
+    <link rel="bookmark" type="image/x-icon" href="../img/ak.ico"/>
+	<link rel="shortcut icon" href="../img/ak.ico">
+	<link rel="icon" href="../img/ak.ico"> 
+	<link rel="stylesheet" href="../js/easyui/css/base.css" >
+	<link rel="stylesheet" type="text/css" href="../js/sccl/common/css/sccl.css">
+	<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css">
+	<link rel="stylesheet" href="../js/easyui/custom/uimaker/easyui.css">
+	<link rel="stylesheet" href="../js/easyui/css/platform.css">
+	<link rel="stylesheet" type="text/css" href="../js/sccl/common/skin/qingxin/skin.css" id="layout-skin"/>
+</head> 
+<style>
+textarea.jstemplate {
+	display: none;
+}
+</style>
+<body>
+    <div class="container">
+        <div id="pf-hd">
+            <!-- <div class="pf-logo">
+                <img src="../images/portallogo.png" alt="logo">
+            </div> -->            
+            <div class="pf-nav-wrap">
+              <div class="pf-nav-ww" id="app-tab">
+	              <textarea id="app-tab-tpl" class="jstemplate">
+					<ul class="pf-nav">
+						{#foreach $T.applist as app}
+						{#if $T.app.code!='aiko-home'}
+							{#if $T.app.code=='sort'}
+								<li  class="pf-nav-item home current" data-iconfont="&#{$T.app.iconfont}" data-appcode="{$T.app.code}" data-target="{$T.app.target}" data-url="{$T.app.index_url}" data-title="{$T.app.shortname}">
+									<a href="javascript:;" title="{$T.app.des}" target={$T.app.target}>
+										<span class="iconfont">&#{$T.app.iconfont}</span>
+                          				<span class="pf-nav-title">{$T.app.shortname}</span>
+									</a>
+								</li>
+								{#else}
+								<li  class="pf-nav-item" data-iconfont="&#{$T.app.iconfont}" data-appcode="{$T.app.code}" data-target="{$T.app.target}" data-url="{$T.app.index_url}" data-title="{$T.app.shortname}">
+									<a href="javascript:;" title="{$T.app.des}" target={$T.app.target}>
+										<span class="iconfont">&#{$T.app.iconfont}</span>
+                          				<span class="pf-nav-title">{$T.app.shortname}</span>
+									</a>
+								</li>
+							{#/if}
+						{#/if}
+						{#/for}
+					</ul>
+				</textarea>
+              </div>
+
+              <a href="javascript:;" hidden class="pf-nav-prev disabled iconfont next">&#xe636;</a>
+              <a href="javascript:;" hidden class="pf-nav-next iconfont next">&#xe635;</a>              	              	 
+                           
+            </div>
+        </div>
+        
+        <div id="pf-bd"  class='toggle'>
+            <div id="pf-page">
+           	 	<iframe class="page-iframe" name="main" id="main" frameborder="no"   border="no" height="100%" width="100%"  scrolling="auto"></iframe>
+                <div class="easyui-tabs" id='etab'  style="display:none;width:100%;height:100%;">	                        	
+                </div>
+            </div>
+        </div>
+		<div class="pf-tab-panel" style="width:180px;">
+			<input type="hidden" id="curTabUrl">
+         	<ul class="pf-tab-opt">
+         		<li>
+         			<a href="javascript:void(0);" onclick="open4NewTab()">
+                       	<i class="iconfont">&#xea96;</i>
+                        <span class="pf-opt-name">在新标签页中打开</span>
+                    </a>
+         		</li>
+         		<li>
+         			<a href="javascript:void(0);" onclick="open4NewWindow()">
+                       	<i class="iconfont">&#xea96;</i>
+                        <span class="pf-opt-name">在新窗口中打开</span>
+                    </a>
+         		</li>
+         	</ul>
+         </div>
+      	<div id="pf-ft">
+            <div class="copyright-name">
+              <b>版权所有 © 2017 AikoSolar. 广东爱旭科技股份有限公司</b>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="CONTEXT-PATH" value=".."/>
+    <script type="text/javascript" src="../js/easyui/custom/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/easyui/custom/jquery.easyui.min.js"></script>    
+	<script type="text/javascript" src="../js/jquery/jquery.form.js"></script>
+	<script type="text/javascript" src="../js/jquery/jTemplates/jquery-jtemplates.js"></script>
+	<script type="text/javascript" src="../js/layer/layer.js"></script>
+	<script type="text/javascript" src="../js/layui/layui.js"></script>
+	<script type="text/javascript" src="../js/jquery/common.js"></script>
+	<script type="text/javascript" src="../js/easyui/js/tabs.js"></script>
+	<script type="text/javascript" src="../js/easyui/js/main.js"></script>
+	
+    <!--[if IE 7]>
+      <script type="text/javascript">
+        $(window).resize(function(){
+          $('#pf-bd').height($(window).height()-76);
+        }).resize();
+        
+      </script>
+    <![endif]-->  
+    
+    <script type="text/javascript">
+    $(function() {
+    	initialize4Element("app-tab", "/aiko-ROOT/home/appdata");
+    	setTimeout("checkLi()",1000)
+
+    });
+    
+    function checkLi(){
+    	var item=$(".pf-nav-item");
+    	if(item.size()>8){
+    		$(".next").show();
+    	}
+    }
+    function open4NewTab(){
+    	window.open($("#curTabUrl").val(),"_blank");
+    	$(".pf-tab-panel").hide();
+    }
+    function open4NewWindow(){
+    	window.open($("#curTabUrl").val(),"_blank","scrollbars=yes,resizable=1,modal=false,alwaysRaised=yes");
+    	$(".pf-tab-panel").hide();
+    }
+    
+var page = 0,
+pages = ($('.pf-nav').height() / 70) - 1;
+
+if(pages === 0){
+  $('.pf-nav-prev,.pf-nav-next').hide();
+}
+
+$(document).on('click', '.pf-nav-prev,.pf-nav-next', function(){
+  if($(this).hasClass('disabled')) return;
+  if($(this).hasClass('pf-nav-next')){
+    page++;
+    $('.pf-nav').stop().animate({'margin-top': -70*page}, 200);
+    if(page == pages){
+      $(this).addClass('disabled');
+      $('.pf-nav-prev').removeClass('disabled');
+    }else{
+      $('.pf-nav-prev').removeClass('disabled');
+    }
+    
+  }else{
+    page--;
+    $('.pf-nav').stop().animate({'margin-top': -70*page}, 200);
+    if(page == 0){
+      $(this).addClass('disabled');
+      $('.pf-nav-next').removeClass('disabled');
+    }else{
+      $('.pf-nav-next').removeClass('disabled');
+    }
+    
+  }
+})
+
+    </script>
+</body> 
+</html>

@@ -1,0 +1,17 @@
+package com.ycb.mapper;
+
+import com.ycb.domain.config_b;
+
+public interface config_bMapper {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(config_b record);
+
+    int insertSelective(config_b record);
+
+    config_b selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(config_b record);
+
+    int updateByPrimaryKey(config_b record);
+}

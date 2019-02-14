@@ -1,0 +1,19 @@
+package com.ycb.mapper;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.ycb.domain.Alarm_a;
+
+public interface Alarm_aMapper {
+    int insert(Alarm_a record);
+
+    int insertSelective(Alarm_a record);
+    
+    List<Alarm_a> getKeyList();
+    
+    List<Alarm_a> getKeyByvalue(@Param("params") Map<String, Object> params);
+    
+}

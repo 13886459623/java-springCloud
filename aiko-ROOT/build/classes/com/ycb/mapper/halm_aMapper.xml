@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycb.mapper.halm_aMapper">
+  <resultMap id="BaseResultMap" type="com.ycb.domain.halm_a">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="wafer_id" jdbcType="INTEGER" property="waferId" />
+    <result column="batch_id" jdbcType="INTEGER" property="batchId" />
+    <result column="photo_id" jdbcType="VARCHAR" property="photoId" />
+    <result column="work_time" jdbcType="VARCHAR" property="workTime" />
+    <result column="划痕" jdbcType="VARCHAR" property="划痕" />
+    <result column="断栅" jdbcType="VARCHAR" property="断栅" />
+    <result column="连续断栅" jdbcType="VARCHAR" property="连续断栅" />
+    <result column="隐裂" jdbcType="VARCHAR" property="隐裂" />
+    <result column="黑斑黑点" jdbcType="VARCHAR" property="黑斑黑点" />
+    <result column="吸球印吸盘印" jdbcType="VARCHAR" property="吸球印吸盘印" />
+    <result column="水印手指印" jdbcType="VARCHAR" property="水印手指印" />
+    <result column="雾状发黑" jdbcType="VARCHAR" property="雾状发黑" />
+    <result column="黑边" jdbcType="VARCHAR" property="黑边" />
+    <result column="舟框印" jdbcType="VARCHAR" property="舟框印" />
+    <result column="印刷偏移" jdbcType="VARCHAR" property="印刷偏移" />
+    <result column="四角发黑" jdbcType="VARCHAR" property="四角发黑" />
+    <result column="同心圆发黑" jdbcType="VARCHAR" property="同心圆发黑" />
+    <result column="气流片" jdbcType="VARCHAR" property="气流片" />
+    <result column="皮带印滚轮印" jdbcType="VARCHAR" property="皮带印滚轮印" />
+    <result column="未知大故障" jdbcType="VARCHAR" property="未知大故障" />
+    <result column="边界" jdbcType="VARCHAR" property="边界" />
+    <result column="其他" jdbcType="VARCHAR" property="其他" />
+    <result column="result" jdbcType="VARCHAR" property="result" />
+    <result column="file_src" jdbcType="VARCHAR" property="fileSrc" />
+    <result column="lase_update_time" jdbcType="VARCHAR" property="laseUpdateTime" />
+    <result column="lase_update_user" jdbcType="VARCHAR" property="laseUpdateUser" />
+    <result column="result_all" jdbcType="VARCHAR" property="resultAll" />
+  </resultMap>
+  <insert id="insert" parameterType="com.ycb.domain.halm_a">
+    insert into halm_a (id, wafer_id, batch_id, 
+      photo_id, work_time, 划痕, 
+      断栅, 连续断栅, 隐裂, 黑斑黑点, 
+      吸球印吸盘印, 水印手指印, 雾状发黑, 
+      黑边, 舟框印, 印刷偏移, 四角发黑, 
+      同心圆发黑, 气流片, 皮带印滚轮印, 
+      未知大故障, 边界, 其他, result, 
+      file_src, lase_update_time, lase_update_user, 
+      result_all)
+    values (#{id,jdbcType=INTEGER}, #{waferId,jdbcType=INTEGER}, #{batchId,jdbcType=INTEGER}, 
+      #{photoId,jdbcType=VARCHAR}, #{workTime,jdbcType=VARCHAR}, #{划痕,jdbcType=VARCHAR}, 
+      #{断栅,jdbcType=VARCHAR}, #{连续断栅,jdbcType=VARCHAR}, #{隐裂,jdbcType=VARCHAR}, #{黑斑黑点,jdbcType=VARCHAR}, 
+      #{吸球印吸盘印,jdbcType=VARCHAR}, #{水印手指印,jdbcType=VARCHAR}, #{雾状发黑,jdbcType=VARCHAR}, 
+      #{黑边,jdbcType=VARCHAR}, #{舟框印,jdbcType=VARCHAR}, #{印刷偏移,jdbcType=VARCHAR}, #{四角发黑,jdbcType=VARCHAR}, 
+      #{同心圆发黑,jdbcType=VARCHAR}, #{气流片,jdbcType=VARCHAR}, #{皮带印滚轮印,jdbcType=VARCHAR}, 
+      #{未知大故障,jdbcType=VARCHAR}, #{边界,jdbcType=VARCHAR}, #{其他,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, 
+      #{fileSrc,jdbcType=VARCHAR}, #{laseUpdateTime,jdbcType=VARCHAR}, #{laseUpdateUser,jdbcType=VARCHAR}, 
+      #{resultAll,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ycb.domain.halm_a">
+    insert into halm_a
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="waferId != null">
+        wafer_id,
+      </if>
+      <if test="batchId != null">
+        batch_id,
+      </if>
+      <if test="photoId != null">
+        photo_id,
+      </if>
+      <if test="workTime != null">
+        work_time,
+      </if>
+      <if test="划痕 != null">
+        划痕,
+      </if>
+      <if test="断栅 != null">
+        断栅,
+      </if>
+      <if test="连续断栅 != null">
+        连续断栅,
+      </if>
+      <if test="隐裂 != null">
+        隐裂,
+      </if>
+      <if test="黑斑黑点 != null">
+        黑斑黑点,
+      </if>
+      <if test="吸球印吸盘印 != null">
+        吸球印吸盘印,
+      </if>
+      <if test="水印手指印 != null">
+        水印手指印,
+      </if>
+      <if test="雾状发黑 != null">
+        雾状发黑,
+      </if>
+      <if test="黑边 != null">
+        黑边,
+      </if>
+      <if test="舟框印 != null">
+        舟框印,
+      </if>
+      <if test="印刷偏移 != null">
+        印刷偏移,
+      </if>
+      <if test="四角发黑 != null">
+        四角发黑,
+      </if>
+      <if test="同心圆发黑 != null">
+        同心圆发黑,
+      </if>
+      <if test="气流片 != null">
+        气流片,
+      </if>
+      <if test="皮带印滚轮印 != null">
+        皮带印滚轮印,
+      </if>
+      <if test="未知大故障 != null">
+        未知大故障,
+      </if>
+      <if test="边界 != null">
+        边界,
+      </if>
+      <if test="其他 != null">
+        其他,
+      </if>
+      <if test="result != null">
+        result,
+      </if>
+      <if test="fileSrc != null">
+        file_src,
+      </if>
+      <if test="laseUpdateTime != null">
+        lase_update_time,
+      </if>
+      <if test="laseUpdateUser != null">
+        lase_update_user,
+      </if>
+      <if test="resultAll != null">
+        result_all,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="waferId != null">
+        #{waferId,jdbcType=INTEGER},
+      </if>
+      <if test="batchId != null">
+        #{batchId,jdbcType=INTEGER},
+      </if>
+      <if test="photoId != null">
+        #{photoId,jdbcType=VARCHAR},
+      </if>
+      <if test="workTime != null">
+        #{workTime,jdbcType=VARCHAR},
+      </if>
+      <if test="划痕 != null">
+        #{划痕,jdbcType=VARCHAR},
+      </if>
+      <if test="断栅 != null">
+        #{断栅,jdbcType=VARCHAR},
+      </if>
+      <if test="连续断栅 != null">
+        #{连续断栅,jdbcType=VARCHAR},
+      </if>
+      <if test="隐裂 != null">
+        #{隐裂,jdbcType=VARCHAR},
+      </if>
+      <if test="黑斑黑点 != null">
+        #{黑斑黑点,jdbcType=VARCHAR},
+      </if>
+      <if test="吸球印吸盘印 != null">
+        #{吸球印吸盘印,jdbcType=VARCHAR},
+      </if>
+      <if test="水印手指印 != null">
+        #{水印手指印,jdbcType=VARCHAR},
+      </if>
+      <if test="雾状发黑 != null">
+        #{雾状发黑,jdbcType=VARCHAR},
+      </if>
+      <if test="黑边 != null">
+        #{黑边,jdbcType=VARCHAR},
+      </if>
+      <if test="舟框印 != null">
+        #{舟框印,jdbcType=VARCHAR},
+      </if>
+      <if test="印刷偏移 != null">
+        #{印刷偏移,jdbcType=VARCHAR},
+      </if>
+      <if test="四角发黑 != null">
+        #{四角发黑,jdbcType=VARCHAR},
+      </if>
+      <if test="同心圆发黑 != null">
+        #{同心圆发黑,jdbcType=VARCHAR},
+      </if>
+      <if test="气流片 != null">
+        #{气流片,jdbcType=VARCHAR},
+      </if>
+      <if test="皮带印滚轮印 != null">
+        #{皮带印滚轮印,jdbcType=VARCHAR},
+      </if>
+      <if test="未知大故障 != null">
+        #{未知大故障,jdbcType=VARCHAR},
+      </if>
+      <if test="边界 != null">
+        #{边界,jdbcType=VARCHAR},
+      </if>
+      <if test="其他 != null">
+        #{其他,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null">
+        #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="fileSrc != null">
+        #{fileSrc,jdbcType=VARCHAR},
+      </if>
+      <if test="laseUpdateTime != null">
+        #{laseUpdateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="laseUpdateUser != null">
+        #{laseUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="resultAll != null">
+        #{resultAll,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+   <select id="getTtimeList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		
+		select 
+			a.result,
+			COUNT(a.result) as result_all
+		from  halm_a a
+		<where>
+		    1=1
+			<if test="params.startTime!=null and params.endTime!=null ">
+				and a.work_time BETWEEN #{params.startTime} and #{params.endTime}
+			</if>
+		</where> 
+		GROUP BY a.result
+	</select>
+  
+  
+  
+  
+  
+</mapper>

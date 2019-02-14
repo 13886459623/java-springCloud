@@ -1,0 +1,30 @@
+package com.ycb.task;
+
+import org.apache.log4j.Logger;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import com.ycb.controller.PCController;
+
+/**
+ * 
+ * 定时器
+ * @author Administrator
+ *
+ */
+@Component
+public class TaskController {
+	private Logger log = Logger.getLogger(PCController.class);
+	
+	
+	
+    /**
+     * 定时器 间隔一秒执行
+     * 
+     */
+/*    @Scheduled(cron = "0/1 * * * * ? ") // 间隔1秒执行
+    public void taskCycle() {
+    	
+    	log.info("=======================taskCycle   开始执行.......");
+    }*/
+}

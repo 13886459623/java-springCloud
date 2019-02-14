@@ -1,0 +1,42 @@
+package com.ycb.controller.config;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ycb.domain.config_a;
+import com.ycb.service.ConfigService;
+
+import chinapay.util.Page;
+
+@Controller 
+public class ConfigController {
+	@Autowired
+	private ConfigService configService;
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	@RequestMapping(value="/configA/configAList")
+	@ResponseBody
+	public Map<String, Object> configAList(HttpServletRequest request, HttpServletResponse response,int cPage,int pSize) {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
+		Page page=new Page();
+		page.setPageAndSize(cPage,pSize);
+		List<config_a> list = configService.getConfigAList(params,page.getCurrentPage(),page.getPageSize());
+		returnMap.put("data", list);
+		returnMap.put("totals",30);
+		return returnMap;
+	}
+	
+}

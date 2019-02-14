@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ycb.mapper.details_listMapper">
+  <resultMap id="BaseResultMap" type="com.ycb.domain.details_list">
+    <result column="el_id" jdbcType="INTEGER" property="elId" />
+    <result column="el_badtype" jdbcType="VARCHAR" property="elBadtype" />
+    <result column="el_badnum" jdbcType="VARCHAR" property="elBadnum" />
+    <result column="el_board" jdbcType="VARCHAR" property="elBoard" />
+    <result column="el_imgpath" jdbcType="VARCHAR" property="elImgpath" />
+    <result column="el_path" jdbcType="VARCHAR" property="elPath" />
+    <result column="el_chipnum" jdbcType="VARCHAR" property="elChipnum" />
+    <result column="el_number" jdbcType="VARCHAR" property="elNumber" />
+    <result column="el_badtypetime" jdbcType="TIMESTAMP" property="elBadtypetime" />
+    <result column="el_datatime" jdbcType="TIMESTAMP" property="elDatatime" />
+    <result column="el_bath" jdbcType="VARCHAR" property="elBath" />
+    <result column="el_extend" jdbcType="VARCHAR" property="elExtend" />
+    <result column="el_extend1" jdbcType="VARCHAR" property="elExtend1" />
+    <result column="el_extend2" jdbcType="VARCHAR" property="elExtend2" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    el_id, el_badtype, el_badnum, el_board, el_imgpath, el_path, el_chipnum, el_number, 
+    el_badtypetime, el_datatime, el_bath, el_extend, el_extend1, el_extend2
+  </sql>
+  <select id="selectByExample" parameterType="com.ycb.domain.details_listExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from el_bad_details_list
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.ycb.domain.details_listExample">
+    delete from el_bad_details_list
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ycb.domain.details_list">
+    insert into el_bad_details_list (el_id, el_badtype, el_badnum, 
+      el_board, el_imgpath, el_path, 
+      el_chipnum, el_number, el_badtypetime, 
+      el_datatime, el_bath, el_extend, 
+      el_extend1, el_extend2)
+    values (#{elId,jdbcType=INTEGER}, #{elBadtype,jdbcType=VARCHAR}, #{elBadnum,jdbcType=VARCHAR}, 
+      #{elBoard,jdbcType=VARCHAR}, #{elImgpath,jdbcType=VARCHAR}, #{elPath,jdbcType=VARCHAR}, 
+      #{elChipnum,jdbcType=VARCHAR}, #{elNumber,jdbcType=VARCHAR}, #{elBadtypetime,jdbcType=TIMESTAMP}, 
+      #{elDatatime,jdbcType=TIMESTAMP}, #{elBath,jdbcType=VARCHAR}, #{elExtend,jdbcType=VARCHAR}, 
+      #{elExtend1,jdbcType=VARCHAR}, #{elExtend2,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ycb.domain.details_list">
+    insert into el_bad_details_list
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="elId != null">
+        el_id,
+      </if>
+      <if test="elBadtype != null">
+        el_badtype,
+      </if>
+      <if test="elBadnum != null">
+        el_badnum,
+      </if>
+      <if test="elBoard != null">
+        el_board,
+      </if>
+      <if test="elImgpath != null">
+        el_imgpath,
+      </if>
+      <if test="elPath != null">
+        el_path,
+      </if>
+      <if test="elChipnum != null">
+        el_chipnum,
+      </if>
+      <if test="elNumber != null">
+        el_number,
+      </if>
+      <if test="elBadtypetime != null">
+        el_badtypetime,
+      </if>
+      <if test="elDatatime != null">
+        el_datatime,
+      </if>
+      <if test="elBath != null">
+        el_bath,
+      </if>
+      <if test="elExtend != null">
+        el_extend,
+      </if>
+      <if test="elExtend1 != null">
+        el_extend1,
+      </if>
+      <if test="elExtend2 != null">
+        el_extend2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="elId != null">
+        #{elId,jdbcType=INTEGER},
+      </if>
+      <if test="elBadtype != null">
+        #{elBadtype,jdbcType=VARCHAR},
+      </if>
+      <if test="elBadnum != null">
+        #{elBadnum,jdbcType=VARCHAR},
+      </if>
+      <if test="elBoard != null">
+        #{elBoard,jdbcType=VARCHAR},
+      </if>
+      <if test="elImgpath != null">
+        #{elImgpath,jdbcType=VARCHAR},
+      </if>
+      <if test="elPath != null">
+        #{elPath,jdbcType=VARCHAR},
+      </if>
+      <if test="elChipnum != null">
+        #{elChipnum,jdbcType=VARCHAR},
+      </if>
+      <if test="elNumber != null">
+        #{elNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="elBadtypetime != null">
+        #{elBadtypetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="elDatatime != null">
+        #{elDatatime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="elBath != null">
+        #{elBath,jdbcType=VARCHAR},
+      </if>
+      <if test="elExtend != null">
+        #{elExtend,jdbcType=VARCHAR},
+      </if>
+      <if test="elExtend1 != null">
+        #{elExtend1,jdbcType=VARCHAR},
+      </if>
+      <if test="elExtend2 != null">
+        #{elExtend2,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ycb.domain.details_listExample" resultType="java.lang.Long">
+    select count(*) from el_bad_details_list
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update el_bad_details_list
+    <set>
+      <if test="record.elId != null">
+        el_id = #{record.elId,jdbcType=INTEGER},
+      </if>
+      <if test="record.elBadtype != null">
+        el_badtype = #{record.elBadtype,jdbcType=VARCHAR},
+      </if>
+      <if test="record.elBadnum != null">
+        el_badnum = #{record.elBadnum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.elBoard != null">
+        el_board = #{record.elBoard,jdbcType=VARCHAR},
+      </if>
+      <if test="record.elImgpath != null">
+        el_imgpath = #{record.elImgpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.elPath != null">
+        el_path = #{record.elPath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.elChipnum != null">
+        el_chipnum = #{record.elChipnum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.elNumber != null">
+        el_number = #{record.elNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.elBadtypetime != null">
+        el_badtypetime = #{record.elBadtypetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.elDatatime != null">
+        el_datatime = #{record.elDatatime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.elBath != null">
+        el_bath = #{record.elBath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.elExtend != null">
+        el_extend = #{record.elExtend,jdbcType=VARCHAR},
+      </if>
+      <if test="record.elExtend1 != null">
+        el_extend1 = #{record.elExtend1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.elExtend2 != null">
+        el_extend2 = #{record.elExtend2,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update el_bad_details_list
+    set el_id = #{record.elId,jdbcType=INTEGER},
+      el_badtype = #{record.elBadtype,jdbcType=VARCHAR},
+      el_badnum = #{record.elBadnum,jdbcType=VARCHAR},
+      el_board = #{record.elBoard,jdbcType=VARCHAR},
+      el_imgpath = #{record.elImgpath,jdbcType=VARCHAR},
+      el_path = #{record.elPath,jdbcType=VARCHAR},
+      el_chipnum = #{record.elChipnum,jdbcType=VARCHAR},
+      el_number = #{record.elNumber,jdbcType=VARCHAR},
+      el_badtypetime = #{record.elBadtypetime,jdbcType=TIMESTAMP},
+      el_datatime = #{record.elDatatime,jdbcType=TIMESTAMP},
+      el_bath = #{record.elBath,jdbcType=VARCHAR},
+      el_extend = #{record.elExtend,jdbcType=VARCHAR},
+      el_extend1 = #{record.elExtend1,jdbcType=VARCHAR},
+      el_extend2 = #{record.elExtend2,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  
+  	<select id="findList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		select t.* from el_bad_details_list t
+		<where>
+		    1=1
+			<if test="params.elid!=null and params.elid!='' ">
+				and t.el_id=#{params.elid}
+			</if>
+			<if test="params.el_badtype!=null and params.el_badtype!='' ">
+				and t.el_badtype  LIKE CONCAT('%',#{params.el_badtype},'%')
+			</if>
+			
+			<if test="params.sort_elBadtypetime!=null and params.sort_elBadtypetime!='DESC' ">
+				order by t.el_badtypetime DESC
+			</if>
+			
+			<if test="params.sort_elBadtypetime!=null and params.sort_elBadtypetime!='ASC' ">
+				order by t.el_badtypetime ASC
+			</if>
+		</where> 
+		
+		LIMIT #{cPage},#{pSize}
+	</select>
+	
+	  	<select id="selectBycount" resultType="int">
+		select count(*) from el_bad_details_list t
+		<where>
+		    1=1
+			<if test="params.elid!=null and params.elid!='' ">
+				and t.el_id=#{params.elid}
+			</if>
+			<if test="params.el_badtype!=null and params.el_badtype!='' ">
+				and t.el_badtype  LIKE CONCAT('%',#{params.el_badtype},'%')
+			</if>
+			
+		</where> 
+	</select>
+  
+</mapper>

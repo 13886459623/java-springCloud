@@ -1,0 +1,793 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>erp 后台</title>
+
+<link href="skin_0.css" rel="stylesheet" type="text/css" id="cssfile" />
+
+<!--[if IE]>
+<script src="http://hpx.miaosir.com/upload/resource/js/html5.js"></script>
+<![endif]-->
+<script type="text/javascript" src="js/tagChange.js" ></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="jquery.validation.min.js"></script>
+<script type="text/javascript" src="jquery.cookie.js"></script>
+
+<script>
+$(document).ready(function () {
+    $('span.bar-btn').click(function () {
+	$('ul.bar-list').toggle('fast');
+    });
+});
+
+$(document).ready(function(){
+	var pagestyle = function() {
+		var iframe = $("#workspace");
+		var h = $(window).height() - iframe.offset().top;
+		var w = $(window).width() - iframe.offset().left;
+		if(h < 300) h = 300;
+		if(w < 973) w = 973;
+		iframe.height(h);
+		iframe.width(w);
+	}
+	pagestyle();
+	$(window).resize(pagestyle);
+	//turn location
+	if($.cookie('now_location_act') != null){
+		openItem($.cookie('now_location_op')+','+$.cookie('now_location_act')+','+$.cookie('now_location_nav'));
+	}else{
+		$('#mainMenu>ul').first().css('display','block');
+		//第一次进入后台时，默认定到欢迎界面
+		$('#item_welcome').addClass('selected');			
+		$('#workspace').attr('src','index.php?act=dashboard&op=welcome');
+	}
+	$('#iframe_refresh').click(function(){
+		var fr = document.frames ? document.frames("workspace") : document.getElementById("workspace").contentWindow;;
+		fr.location.reload();
+	});
+
+});
+//收藏夹
+function addBookmark(url, label) {
+    if (document.all)
+    {
+        window.external.addFavorite(url, label);
+    }
+    else if (window.sidebar)
+    {
+        window.sidebar.addPanel(label, url, '');
+    }
+}
+
+
+function openItem(args){
+	//cookie
+	
+	if($.cookie('BFB3_sys_key') === null){
+		location.href = 'index.php?act=login&op=login';
+		return false;
+	}
+
+	spl = args.split(',');
+	op  = spl[0];
+	try {
+		act = spl[1];
+		nav = spl[2];
+	}
+	catch(ex){}
+	if (typeof(act)=='undefined'){var nav = args;}
+	$('.actived').removeClass('actived');
+	$('#nav_'+nav).addClass('actived');
+
+	$('.selected').removeClass('selected');	
+
+	//show
+	$('#mainMenu ul').css('display','none');
+	$('#sort_'+nav).css('display','block');	
+
+	if (typeof(act)=='undefined'){
+		//顶部菜单事件
+		html = $('#sort_'+nav+'>li>dl>dd>ol>li').first().html();
+		str = html.match(/openItem\('(.*)'\)/ig);
+		arg = str[0].split("'");
+		spl = arg[1].split(',');
+		op  = spl[0];
+		act = spl[1];
+		nav = spl[2];
+		first_obj = $('#sort_'+nav+'>li>dl>dd>ol>li').first().children('a');
+		$(first_obj).addClass('selected');		
+		//crumbs
+		$('#crumbs').html('<span>'+$('#nav_'+nav+' > span').html()+'</span><span class="arrow">&nbsp;</span><span>'+$(first_obj).text()+'</span>');		
+	}else{
+		//左侧菜单事件
+		//location
+		$.cookie('now_location_nav',nav);
+		$.cookie('now_location_act',act);
+		$.cookie('now_location_op',op);
+		$("a[name='item_"+op+act+"']").addClass('selected');
+		//crumbs
+		$('#crumbs').html('<span>'+$('#nav_'+nav+' > span').html()+'</span><span class="arrow">&nbsp;</span><span>'+$('#item_'+op+act).html()+'</span>');
+	}
+
+	src = 'index.php?act='+act+'&op='+op;
+	$('#workspace').attr('src',src);
+
+}
+
+$(function(){
+		bindAdminMenu();
+		})
+		function bindAdminMenu(){
+	
+		$("[nc_type='parentli']").click(function(){
+			var key = $(this).attr('dataparam');
+			if($(this).find("dd").css("display")=="none"){
+				$("[nc_type='"+key+"']").slideDown("fast");
+				$(this).find('dt').css("background-position","-322px -170px");
+				$(this).find("dd").show();
+			}else{
+				$("[nc_type='"+key+"']").slideUp("fast");
+				$(this).find('dt').css("background-position","-483px -170px");
+				$(this).find("dd").hide();
+			}
+		});
+	}
+</script>
+<script type="text/javascript"> 
+//显示灰色JS遮罩层 
+function showBg(ct,content){ 
+var bH=$("body").height(); 
+var bW=$("body").width(); 
+var objWH=getObjWh(ct); 
+$("#pagemask").css({width:bW,height:bH,display:"none"}); 
+var tbT=objWH.split("|")[0]+"px"; 
+var tbL=objWH.split("|")[1]+"px"; 
+$("#"+ct).css({top:tbT,left:tbL,display:"block"}); 
+$(window).scroll(function(){resetBg()}); 
+$(window).resize(function(){resetBg()}); 
+} 
+function getObjWh(obj){ 
+var st=document.documentElement.scrollTop;//滚动条距顶部的距离 
+var sl=document.documentElement.scrollLeft;//滚动条距左边的距离 
+var ch=document.documentElement.clientHeight;//屏幕的高度 
+var cw=document.documentElement.clientWidth;//屏幕的宽度 
+var objH=$("#"+obj).height();//浮动对象的高度 
+var objW=$("#"+obj).width();//浮动对象的宽度 
+var objT=Number(st)+(Number(ch)-Number(objH))/2; 
+var objL=Number(sl)+(Number(cw)-Number(objW))/2; 
+return objT+"|"+objL; 
+} 
+function resetBg(){ 
+var fullbg=$("#pagemask").css("display"); 
+if(fullbg=="block"){ 
+var bH2=$("body").height(); 
+var bW2=$("body").width(); 
+$("#pagemask").css({width:bW2,height:bH2}); 
+var objV=getObjWh("dialog"); 
+var tbT=objV.split("|")[0]+"px"; 
+var tbL=objV.split("|")[1]+"px"; 
+$("#dialog").css({top:tbT,left:tbL}); 
+} 
+} 
+
+//关闭灰色JS遮罩层和操作窗口 
+function closeBg(){ 
+$("#pagemask").css("display","none"); 
+$("#dialog").css("display","none"); 
+} 
+</script>
+<script type="text/javascript"> 
+$(function(){   
+    var $li =$("#skin li");   
+		$li.click(function(){   
+		$("#"+this.id).addClass("selected").siblings().removeClass("selected");
+		$("#cssfile").attr("href","http://hpx.miaosir.com/upload/admin/templates/css/"+ (this.id) +".css");   
+        $.cookie( "MyCssSkin" ,  this.id , { path: '/', expires: 10 });  
+
+        $('iframe').contents().find('#cssfile2').attr("href","http://hpx.miaosir.com/upload/admin/templates/css/"+ (this.id) +".css"); 
+    });   
+
+    var cookie_skin = $.cookie( "MyCssSkin");   
+    if (cookie_skin) {   
+		$("#"+cookie_skin).addClass("selected").siblings().removeClass("selected");
+		$("#cssfile").attr("href","http://hpx.miaosir.com/upload/admin/templates/css/"+ cookie_skin +".css"); 
+		$.cookie( "MyCssSkin" ,  cookie_skin  , { path: '/', expires: 10 }); 
+    }   
+});
+function addFavorite(url, title) {
+	try {
+		window.external.addFavorite(url, title);
+	} catch (e){
+		try {
+			window.sidebar.addPanel(title, url, '');
+        	} catch (e) {
+			showDialog("请按 Ctrl+D 键添加到收藏夹", 'notice');
+		}
+	}
+}
+</script>
+
+<style type="text/css">
+body, ul, ol, li, dl, dt, dd, p, h1, h2, h3, h4, h5, h6, form, fieldset {
+	margin: 0;
+	padding: 0;
+}
+body, td, input, textarea, select, button {
+	color: #555;
+	font: 12px "Microsoft Yahei", "Lucida Grande", Verdana, Lucida, Helvetica, Arial, 'Simsun', sans-serif;
+}
+body li{
+	list-style:none;
+}
+body a{
+	 text-decoration:none;
+}
+
+/* tab 轮换 */
+#tabnav {display:block;width:100%;padding:0;margin:0;list-style:none;margin-left:4px;}
+#tabnav li {float:left;width:60px;}
+#tabnav li a {display:block;line-height:27px;text-decoration:none;padding:0 0 0 5px; text-align:center}
+#menu_con{ width:161px; height:135px;border-top:none;}
+
+
+#main{
+	width:100%;
+	height:627px;	
+	
+}
+#nav{
+	width:100%;
+	height:91px;
+	background: url(sky/body_bg.png) repeat-x 0px 0px;
+	text-align: left;
+	position: relative;
+	z-index: 1;
+	zoom: 1;
+}
+#dao{
+	width:100%;
+	height:91px;
+	background: url(sky/bg_position.gif) no-repeat 0px 0px;
+	text-align: left;
+	position: relative;
+	z-index: 1;
+	zoom: 1;
+}
+
+#nav-left{
+	width:12%;
+	height:91px;
+	float:left;
+}
+#title { 
+	background: url(sky/shopnc_logo.png) no-repeat; 
+	width: 120px; height: 50px; 
+	position: absolute; top: 17px; left: 21px;
+}
+#nav-middle{
+	width:68%;
+	height:91px;
+	float:left;
+}
+
+#nav-right{
+	width:20%;
+	height:91px;
+	float:left;
+}
+
+#middle{
+	width:100%;
+	height:536px;
+}
+#mleft{
+	width:161px;
+	height:536px;
+	background-color:yellow;
+	float:left;
+}
+#mright{
+	width:88%;
+	height:536px;
+	float:left;
+}
+
+
+/* 欢迎 xx */
+.top-nav { 
+	background: url(sky/bg_position.gif) no-repeat 0px -91px; 
+	max-width:320px; _width:expression((documentElement.clientWidth >320) ? "320px" : "auto" );
+	/* IE6 */ height: 28px; padding-bottom: 29px; position: absolute; z-index:1; top: 0; right: 0;
+}
+.top-nav ul { 
+	line-height: 20px; color:#999;  height:20px; padding:6px 8px 2px 0px;
+}
+.top-nav li { 
+	color:#069; background: url(sky/bg_position.gif) no-repeat scroll -638px -96px;  
+	display:inline; padding-left: 4px; margin-left: 2px; float: left;
+}
+.top-nav li a { 
+	color:#069; background: #CCEDF9 url(sky/bg_position.gif) no-repeat scroll 0 999%; 
+	padding-left: 4px;
+}
+.top-nav li a:hover { 
+	color:#0D93BF; background-position: -350px -128px; 
+	padding-left: 4px; text-decoration: none;
+}
+.top-nav li a span { 
+	background: #CCEDF9 url(sky/bg_position.gif) no-repeat scroll 0 999%; padding-right: 4px;
+}
+.top-nav li a:hover span { 
+	background-position: 100% -128px; 
+}
+.top-nav li.adminid { 
+	background: url(sky/bg_position.gif) no-repeat scroll -350px -100px; 
+	white-space:nowrap; max-width:150px;
+	_width:expression((documentElement.clientWidth >150) ? "150px" : "auto" );
+	/* IE6 */ height:20px; padding: 0 0 0 24px; margin-right:4px; overflow: hidden;
+}
+
+
+
+
+/* 主菜单 */ 
+.main-nav {
+	height: 75px; position: absolute; z-index: 1; 
+	top: 16px; left: 153px;
+}
+.main-nav ul { 
+	height: 42px; padding-left: 1px;
+}
+.topmenu ul li { 
+	font-size: 14px; 
+	font-weight: 700; 
+	line-height: 20px; 
+	background: url(sky/button_bg.png) no-repeat right -84px; 
+	/* IE6 */ height: 42px; float: left; display: inline; 
+	padding-right: 5px; margin-left: 3px;
+}
+
+
+
+.main-nav ul li a.link { 
+	background: url(sky/button_bg.png) no-repeat 0 9999px; _background-image: none;
+	/* IE6 */ height: 42px; float: left; padding-left: 8px; cursor: pointer;
+}
+.main-nav ul li a:hover.link { 
+	text-decoration: none; _text-decoration: underline; 
+	background-position: left -126px;
+}
+.main-nav ul li a.actived , #nav ul li a:hover.actived { 
+	background: url(sky/button_bg.png) no-repeat 0px 0px; 
+	/* IE6 */ height: 42px; padding-left: 8px;
+}
+.main-nav li span { 
+	color:#069; background: url(sky/button_bg.png) no-repeat 0px 9999px; 
+	_background-image: none;
+	/* IE6 */ height: 20px; float: left; padding: 11px 14px 11px 6px;
+}
+#cust{
+	width:60px;
+}
+#cust1{
+	width:60px;
+}
+#zixun{
+	margin-left:18px;
+}
+#zixun1{
+	margin-left:18px;
+}
+
+.main-nav li {
+	background: url(sky/button_bg.png) no-repeat 0 0px;
+	height: 42px;
+	float: left;
+	padding-left: 3px;
+	cursor: pointer;
+}
+
+.main-nav li span { 
+	color: #333;
+	background-position: right -168px;
+}
+.main-nav li span , #nav ul li a:hover.actived span { 
+	color: #000; background: url(sky/button_bg.png) no-repeat right -42px;
+	/* IE6 */ height: 20px; padding: 11px 14px 11px 6px;
+}
+
+
+/* 当前位置 */
+.loca {
+	line-height: 24px;
+	color: #7292A4;
+	height: 24px;
+	position: absolute;
+	z-index: 2;
+	top: 62px;
+	left: 170px;
+}
+.loca span.arrow {
+	background: url(sky/bg_position.gif) no-repeat scroll -50px -155px;
+	width: 4px;
+	height: 8px;
+	margin: 9px 6px 7px 6px;
+	_margin: 9px 3px 7px 3px;
+}
+.loca div, .loca strong, .crumbs span, span.arrow {
+	float: left;
+	margin-left: 2px;
+}
+.loca div, .loca strong, .crumbs span, span.arrow {
+	float: left;
+	margin-left: 2px;
+}
+
+
+/* 换肤 */
+.toolbar {
+	position: absolute;
+	z-index: 2;
+	top: 62px;
+	right: 5px;
+}
+.skin {
+	background: url(sky/bg_position.gif) no-repeat -312px -198px;
+	height: 22px;
+	margin-top: 2px;
+	margin-right: 6px;
+	float: left;
+}
+.skin span {
+	float: left;
+	line-height: 16px;
+	height: 16px;
+	padding: 0px 6px 6px 24px;
+}
+.skin li#skin_0 {
+	background-position: -612px -198px;
+}
+.skin li {
+	background: url(sky/bg_position.gif) no-repeat;
+	width: 14px;
+	height: 22px;
+	float: left;
+	margin-right: 2px;
+	margin-left: 2px;
+}
+.skin li#skin_1 {
+	background-position: -626px -198px;
+	cursor: pointer;
+}
+.skin li {
+	background: url(sky/bg_position.gif) no-repeat;
+	width: 14px;
+	height: 22px;
+	float: left;
+	margin-right: 2px;
+	margin-left: 2px;
+}
+.sitemap {
+	float: left;
+	position: relative;
+	z-index: 2;
+}
+.sitemap a {
+	text-decoration: none;
+	background: url(sky/bg_position.gif) scroll no-repeat 0 -400px;
+	float: left;
+	height: 24px;
+	padding-left: 8px;
+	cursor: pointer;
+}
+.sitemap a span {
+	line-height: 24px;
+	font-weight: 700;
+	color: white;
+	float: left;
+	background: #DAF3FD url(sky/bg_position.gif) no-repeat scroll 100% -400px;
+	height: 24px;
+	padding-right: 8px;
+}
+.toolmenu {
+	background: #DAF3FD url(sky/bg_position.gif) scroll no-repeat 0px -450px;
+	width: 36px;
+	height: 24px;
+	margin: 0 12px 0 6px;
+	float: left;
+	position: relative;
+	z-index: 1;
+}
+.toolmenu .bar-btn {
+	display: block;
+	width: 36px;
+	height: 24px;
+	position: absolute;
+	z-index: 2;
+	top: 0px;
+	left: 0px;
+	cursor: pointer;
+}
+.toolmenu .bar-list {
+	background: url(sky/bg_position.gif) no-repeat 100% -450px;
+	display: none;
+	width: 96px;
+	height: 126px;
+	padding: 34px 5px 10px 5px;
+	position: absolute;
+	z-index: 1;
+	top: 0px;
+	right: 0px;
+}
+.toolmenu .bar-list li {
+	line-height: 16px;
+	height: 26px;
+	width: 96px;
+	float: left;
+	clear: left;
+}
+.toolmenu .bar-list li a {
+	text-decoration: none;
+	color: white;
+	text-align: center;
+	display: inline;
+	width: 86px;
+	height: 16px;
+	padding: 3px;
+	margin: 1px;
+	float: left;
+	clear: left;
+	border: 1px solid #15ACDC;
+}
+.toolmenu .bar-list li {
+	line-height: 16px;
+}
+
+
+/* 左侧菜单栏 */
+.menutd { 
+	background: url(sky/left.png) repeat-y left top;
+}
+#main-menu{ 
+	position:relative; z-index:20; width:161px;
+}
+#main-menu li a , #main-menu li a.selected{ 
+	line-height: 20px; 
+	text-decoration: none; 
+	color: #7394A4; 
+	background: url(sky/bg_position.gif) no-repeat ; 
+	display: block; 
+	width: 120px; height: 20px; float: left; clear: left; 
+	padding: 4px 12px 4px 29px; margin: 0;
+}
+#main-menu li a{
+	background-position: 0 -170px;
+}
+
+#sale{
+	color: #31444D; 
+	/* background-color: #CBE9F3; */  background-color:red;
+	background-position: -161px -170px;
+}
+
+
+#main-menu dl dt{ 
+	background-position: -322px -170px; cursor: pointer;
+}
+#main-menu li a:hover{
+	color: #069;
+} 
+</style>
+
+</head>
+<body>
+	
+	<!-- start 全局 -->
+	<div id="main">
+		
+		<!-- start 导航栏 -->
+		<div id="nav">
+			<!-- start 用户显示主菜单栏上面的背景图片 -->
+			<div id="dao">
+		   <!-- start 导航栏 左边 -->
+		   <div id="nav-left">
+				<!-- start logo -->
+		       	<div id="title"></div><!-- end logo -->
+
+		   </div> <!-- end 导航栏 左边 -->
+		   
+		   <!-- start 导航栏 中间 -->
+		   <div id="nav-middle">
+			   <!-- start 主菜单 -->
+				
+		       <div id="topmenu">
+				   <ul id="tabnav" class="main-nav">
+					   <li><a href="#" class="selected"><span  id="cust">客户管理</span></a></li>
+					   <li id="zixun"><a href="#" class=""><span id="cust1">咨询投诉</span></a></li>
+					   <li id="zixun1"><a href="#" class=""><span id="cust1">车辆估价</span></a></li>
+					   <li id="zixun1"><a href="#" class=""><span id="cust1">历史报告</span></a></li>
+					   <li id="zixun1"><a href="#" class=""><span id="cust1">数据维护</span></a></li>
+					   <li id="zixun1"><a href="#" class=""><span id="cust1">广告管理</span></a></li>
+					   <li id="zixun1"><a href="#" class=""><span id="cust1">商品管理</span></a></li>
+					   <li id="zixun1"><a href="#" class=""><span id="cust1">系统管理</span></a></li>
+					   <div style="clear:both"></div>
+				   </ul>
+			   </div><!-- end 主菜单 -->
+
+			   <!-- start 当前位置 -->
+			   <div class="loca">
+					<strong>您的位置:</strong>
+					<div id="crumbs" class="crumbs"><span>控制台</span>
+						<span class="arrow">&nbsp;</span><span>欢迎页面	</span>
+					</div>
+			   </div><!-- end 当前位置 -->
+				
+			   <!-- start 换肤 -->
+				
+				<div class="toolbar">
+					<ul id="skin" class="skin"><span>换肤</span>
+					  <li id="skin_0" class="" title="默认风格"></li>
+					  <li id="skin_1" class="" title="Mac风格"></li>
+					</ul>
+					<div class="sitemap">
+						<a id="siteMapBtn" href="#rhis" onclick="showBg('dialog','dialog_content');"><span>管理地图</span></a>
+					</div>
+					
+					<div class="toolmenu"><span class="bar-btn"></span>
+					  <ul class="bar-list">
+						<li><a onclick="openItem('clear,cache,tool');" href="javascript:void(0)">更新站点缓存</a></li>
+						<li><a href="http://hpx.miaosir.com/upload/admin/" id="iframe_refresh">刷新管理中心</a></li>
+						<li><a onclick="openItem('db,db,tool');" href="JavaScript:void(0);">备份恢复数据</a></li>
+						<li><a onclick="openItem('liststat,updatestat,tool');" href="JavaScript:void(0);" >更新信用统计</a></li>
+						<li><a href="http://hpx.miaosir.com/upload/admin/" title="管理中心-演示站" rel="sidebar" onclick="addFavorite('http://hpx.miaosir.com/upload/admin/', '管理中心-演示站');return false;">收藏管理中心</a></li>
+					  </ul>
+					</div>
+			  </div>
+
+
+
+
+			   <!-- 
+				<div class="toolbar">
+					<ul id="skin" class="skin">
+						<span>换肤</span>
+					  <li id="skin_0" class="" title="默认风格"></li>
+					  <li id="skin_1" class="" title="Mac风格"></li>
+					</ul>
+					<div class="sitemap">
+						<a id="siteMapBtn" href="#rhis" onclick="showBg('dialog','dialog_content');">
+							<span>管理地图</span></a>
+					</div>
+					<div class="toolmenu">
+						<span class="bar-btn"></span>
+							<ul class="bar-list">
+								<li>
+									<a onclick="openItem('clear,cache,tool');" href="javascript:void(0)">更新站点缓存</a>
+								</li>
+								<li>
+									<a href="" id="iframe_refresh">刷新管理中心</a>
+								</li>
+								<li>
+									<a onclick="openItem('db,db,tool');" href="JavaScript:void(0);">备份恢复数据</a>
+								</li>
+								<li>
+									<a onclick="openItem('liststat,updatestat,tool');" href="JavaScript:void(0);">更新信用统计</a>
+								</li>
+								<li>
+									<a href="" title="管理中心-演示站" rel="sidebar" onclick="addFavorite('http://hpx.miaosir.com/upload/admin/', '管理中心-演示站');return false;">收藏管理中心</a>
+								</li>
+							</ul>
+					</div>
+				</div> -->
+			   <!-- end 换肤 -->
+
+		   </div><!-- end 导航栏 中间 -->
+
+		   <!-- start 导航栏 右边 -->
+		   <div id="nav-right">
+		       <!-- start 欢迎xx -->
+			   <div id="topnav" class="top-nav">
+					<ul>
+					  <li class="adminid" title="您好:admin">您好&nbsp;:&nbsp;<strong>admin</strong></li>
+					  <li><a href=""><span>修改密码</span></a></li>
+					  <li><a href="" title="退出"><span>退出</span></a></li>
+					  <li><a href="" target="_blank" title="商城首页"><span>商城首页</span></a></li>
+					</ul>
+			   </div><!-- end 欢迎xx -->
+		   </div><!-- end 导航栏 右边 -->
+	 
+			</div><!-- end 用户显示主菜单栏上面的背景图片 -->
+		</div><!-- end 导航栏 -->
+
+		<!-- start 中 -->
+		<div id="middle">
+			<!-- start 中间  左边 -->
+
+			<div id="mleft" class="menutd">
+				<div id="menu_con">
+					<div class="tag" style="display:block" id="main-menu">
+						<ul>
+							<li id="sale"><a href="register.jsp" target="main">客户注册</a></li>
+							<li><a href="weihu.jsp" target="main">客户维护</a></li>
+							<li><a href="show.html" target="main">客户开卡</a></li>
+							<li><a href="show.html" target="main">会员升级</a></li>
+							<li><a href="show.html" target="main">会员注销</a></li>
+							<li><a href="show.html" target="main">信息查询</a></li>
+							<li><a href="show.html" target="main">客户充值</a></li>
+							<li><a href="show.html" target="main">客户退款</a></li>
+						</ul>
+					 </div> 
+					<div class="tag" style="display:none" id="main-menu">
+						<ul>
+							<li><a href="show.html" target="main">投诉内容</a></li>
+							<li><a href="tag.html" target="main">回复内容</a></li>
+							<li><a href="show.html" target="main">投诉统计</a></li>
+							<li><a href="show.html" target="main">服务咨询</a></li>
+						</ul>
+					 </div> 
+					<div class="tag" style="display:none" id="main-menu">
+						<ul>
+							<li><a href="show.html" target="main">车辆估价</a></li>
+						</ul>
+					</div> 
+					<div class="tag" style="display:none" id="main-menu">
+						<ul>
+							<li><a href="show.html" target="main">支付转账</a></li>
+							<li><a href="tag.html" target="main">报告查询</a></li>
+							<li><a href="show.html" target="main">报告发送</a></li>
+						</ul>
+					</div> 
+					<div class="tag" style="display:none" id="main-menu">
+						
+					</div>
+					<div class="tag" style="display:none" id="main-menu">
+						<ul>
+							<li><a href="show.html" target="main">广告客户</a></li>
+							<li><a href="tag.html" target="main">广告位置</a></li>
+							<li><a href="show.html" target="main">广告定价</a></li>
+							<li><a href="show.html" target="main">广告销售</a></li>
+							<li><a href="show.html" target="main">广告结算</a></li>
+						</ul>
+					</div>
+					<div class="tag" style="display:none" id="main-menu">
+						<ul>
+							<li><a href="show.html" target="main">品类管理</a></li>
+							<li><a href="tag.html" target="main">定价管理</a></li>
+							<li><a href="show.html" target="main">上架管理</a></li>
+							<li><a href="show.html" target="main">销售管理</a></li>
+							<li><a href="show.html" target="main">结算管理</a></li>
+						</ul>
+					</div> 
+					<div class="tag" style="display:none" id="main-menu">
+						<ul>
+							<li><a href="show.html" target="main">字典维护</a></li>
+							<li><a href="show.html" target="main">渠道维护</a></li>
+							<li><a href="show.html" target="main">业务授权</a></li>
+							<li><a href="show.html" target="main">日志功能</a></li>
+							<li><a href="show.html" target="main">第三方参数</a></li>
+						</ul>
+					</div>
+				</div>
+			</div><!-- end 中间  左边 -->
+			
+			<!-- start 中间  右边 -->	
+			<div id="mright">
+				<iframe name="main" src="" frameborder="0" scrolling="auto" width="100%" height="100%">
+					<a href="show.html" target="main">AAA</a>
+				</iframe>
+			</div><!-- end 中间  右边 -->
+
+		</div><!-- end 中 -->
+		
+		<!-- start 下 -->
+		<div id="bottom">
+		
+		</div><!-- end 下 -->
+
+	</div><!-- end 全局 -->
+
+</body>
+</html>
+
+

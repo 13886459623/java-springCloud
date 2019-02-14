@@ -1,0 +1,374 @@
+var CONTEXT_PATH = $("#CONTEXT-PATH").val();
+var mainPlatform = {
+	init: function(){
+		$(function() {
+			var tree = $(this);
+			$('.pf-nav-item').removeClass('current');
+			$(this).addClass('current');
+			initTreeMenu(true,tree);
+		});
+		this.bindEvent();
+		//$(window).resize('main');
+	},
+	bindEvent: function(){
+		//var self = this;
+		// 顶部大菜单单击事件
+		$(document).on('click', '.pf-nav-item', function() {
+			$('.pf-nav-item').removeClass('current');
+			$(this).addClass('current');
+			var tree = $(this);
+			initTreeMenu(false,tree);
+        });
+		
+		//左侧菜单点击
+		$(document).on('click','.side-menu li a',function(e){
+			//变背景颜色
+			$(".side-menu").find('a').each(function(){
+				$(this).css('background','');
+			});
+			$(".side-menu").find('span').each(function(){
+				$(this).css('color','black');
+			});
+			$(this).find('span').each(function(){
+				$(this).css('color','white');
+			});
+			$(this).css({"background":"#4b5f7b","outline":"none"});
+			
+			var animationSpeed = 300;
+			var $this = $(this);
+			var checkElement = $this.next();
+			if (checkElement.is('.menu-item-child') && checkElement.is(':visible')) {
+				checkElement.slideUp(animationSpeed, function() {
+					checkElement.removeClass('menu-open');
+				});
+				checkElement.parent("li").removeClass("active");
+			}
+			// 如果菜单是不可见的
+			else if ((checkElement.is('.menu-item-child')) && (!checkElement.is(':visible'))) {
+				// 获取上级菜单
+				var parent = $this.parents('ul').first();
+				// 从父级开始找所有打开的菜单并关闭
+				var ul = parent.find('ul:visible').slideUp(animationSpeed);
+				// 在父级中移出menu-open标记
+				ul.removeClass('menu-open');
+				// 获取父级li
+				var parent_li = $this.parent("li");
+				// 打开菜单时添加menu-open标记
+				checkElement.slideDown(animationSpeed, function() {
+					// 添加样式active到父级li
+					checkElement.addClass('menu-open');
+					parent.find('li.active').removeClass('active');
+					parent_li.addClass('active');
+				});
+			}
+			// 防止有链接跳转
+			e.preventDefault();
+
+			addIframe($this);
+		});
+
+		 //左侧菜单收起
+        $(document).on('click', '.toggle-icon', function() {
+            $(this).closest("#pf-bd").toggleClass("toggle");
+            setTimeout(function(){
+            	$(window).resize();
+            },200)
+        });
+        
+        //退出系统
+        $(document).on('click', '.pf-logout', function() {
+            layer.confirm('您确定要退出吗？', {
+              icon:5,
+			  title: '提示'
+			}, function(){
+			  location.href=CONTEXT_PATH+'/home/logout'; 
+			});
+        });
+        
+        //tab在新窗口中打开
+        $(".pf-tab-panel").hover(function(){
+			$(".pf-tab-panel").show();
+		},function(){
+			$(".pf-tab-panel").hide();
+		});
+	}
+
+};
+
+mainPlatform.init();
+/*$(window).resize(function(appcode){
+	if(appcode=='main'){
+		if($("#pf-ft").is(":visible")){
+			var pfFtHeight=$("#pf-ft").height();
+	    	var pfBdHeight=$("#pf-bd").height();
+	    	$("#pf-bd").height(pfBdHeight+pfFtHeight);
+			$("#pf-ft").hide();
+		}
+	}else{
+		if($("#pf-ft").is(":hidden")){
+			var pfFtHeight=$("#pf-ft").height();
+	    	var pfBdHeight=$("#pf-bd").height();
+	    	$("#pf-bd").height(pfBdHeight-pfFtHeight);
+			$("#pf-ft").show();
+		} 
+	}	        
+	 $('.tabs-panels').height($("#pf-page").height()-46);
+	 $('.panel-body').height($("#pf-page").height()-76);  	
+}).resize();*/
+
+/*function initAppDiv(){
+	var page = 0,pages;
+	setTimeout(function(){
+		pages = ($('.pf-nav').height() / 70) - 1;
+		if(pages === 0){
+			$('.pf-nav-prev,.pf-nav-next').hide();
+		}
+    },500)
+	
+	$(document).on('click', '.pf-nav-prev,.pf-nav-next', function(){
+		if($(this).hasClass('disabled')) return;
+		if($(this).hasClass('pf-nav-next')){
+			page++;
+			$('.pf-nav').stop().animate({'margin-top': -70*page}, 200);
+			if(page == pages){
+			  $(this).addClass('disabled');
+			  $('.pf-nav-prev').removeClass('disabled');
+			}else{
+			  $('.pf-nav-prev').removeClass('disabled');
+			}
+	
+		}else{
+			page--;
+			$('.pf-nav').stop().animate({'margin-top': -70*page}, 200);
+			if(page == 0){
+			  $(this).addClass('disabled');
+			  $('.pf-nav-next').removeClass('disabled');
+			}else{
+			  $('.pf-nav-next').removeClass('disabled');
+			}
+		
+			}
+	})
+}
+*/
+function change2UIMenu(menu){
+	var uiMenu = {id:menu.id,name:menu.name,parentId:menu.parentid,url:menu.url,icon:"",childMenus:[]};
+	if(menu.childs && menu.childs.length && menu.childs.length > 0){
+		for(var i=0; i<menu.childs.length; i++){
+			uiMenu.childMenus.push(change2UIMenu(menu.childs[i]));
+		}
+	}
+	return uiMenu;
+}
+
+/* 循环菜单 */
+function initMenu(menu, parent) {
+	for (var i = 0; i < menu.length; i++) {
+		var item = menu[i];
+		var str = "";
+		try {
+			if (item.isHeader == "1") {
+				str = "<li class='menu-header'>" + item.name + "</li>";
+				//$(parent).append(str);
+				if (item.childMenus != "") {
+					initMenu(item.childMenus, parent);
+				}
+			} else {
+				item.icon == "" ? item.icon = "&#xe610" : item.icon = item.icon;
+				if (item.childMenus == "") {
+					str = "<li><a href='" + item.url + "'><i class='icon-font'>" + item.icon + "</i><span>" + item.name + "</span></a></li>";
+					$(parent).append(str);
+				} else {
+					str = "<li><a href='" + item.url + "'><i class='icon-font '>" + item.icon + "</i><span>" + item.name + "</span><i class='icon-font icon-right'>&#xe60b;</i></a>";
+					str += "<ul class='menu-item-child' id='menu-child-" + item.id + "'></ul></li>";
+					$(parent).append(str);
+					var childParent = $("#menu-child-" + item.id);
+					initMenu(item.childMenus, childParent);
+				}
+			}
+		} catch (e) {
+		}
+	}
+}
+
+/* 添加iframe */
+function addIframe(cur) {
+	var $this = cur;
+	var h = $this.attr("href"), m = $this.data("index"), label = $this.find("span").text(), isHas = false;
+	if (h == "" || $.trim(h).length == 0) {
+		return false;
+	}
+	
+	if ($('.easyui-tabs').tabs('exists', label)){//如果tab已经存在,则选中并刷新该tab            
+		$('.easyui-tabs').tabs('select', label); 
+		var currentTab = $('.easyui-tabs').tabs('getSelected');
+		RefreshTab(currentTab);		
+        return;
+    }else{
+		$(".mytab").removeClass("active");
+		var tab='<iframe name="iframe' + m + '" class="page-iframe" src="' + h + '" data-id="' + h + '" frameborder="no"   border="no" height="100%" width="100%" scrolling="auto"></iframe>';
+		
+		$('.easyui-tabs').tabs('add',{
+			tabHeight: 44,
+            title:label,
+            content:tab,
+            closable:true
+        });
+		/* 选项卡切换事件 */
+        $(".tabs").on("click", "li", navChange);
+        //绑定tab页停留事件
+		var curTab= $('ul.tabs').find('li.tabs-selected').first();
+		curTab.attr('data-url',h);
+		curTab.hover(function(){
+			$("#curTabUrl").val($(this).data('url'));
+			var offset=$(this).offset();
+			var height=$(this).height();
+			$(".pf-tab-panel").css({top:offset.top+height+'px',left:offset.left+'px'});
+			$(".pf-tab-panel").show();	
+		},function(){
+			$(".pf-tab-panel").hide(); 
+		});
+	}
+	return false;
+}
+
+//刷新当前标签Tabs
+function RefreshTab(currentTab) {
+    var url = $(currentTab.panel('options')).attr('href');
+    $('.easyui-tabs').tabs('update', {
+        tab: currentTab,
+        options: {
+            href: url
+        }
+    });
+    currentTab.panel('refresh');
+}
+
+function closeTabsNoFirst(){ //关闭全部（排除第一个）
+    var tabs = $('.easyui-tabs').tabs('allTabs');
+    $.each(tabs,function(i,n){
+    	if(i>0){
+    		$('.easyui-tabs').tabs('close', n.title);
+    	}
+        
+    })
+}
+
+/* 选项卡切换方法 */
+function navChange() {
+	if (!$(this).hasClass("tabs-selected")) {		
+		//更新菜单选中颜色
+		var s=$(this).html();
+		$(".side-menu").find('span').each(function(){
+			var html=$(this).html();
+			if(s.indexOf(html)>-1){
+				$(this).css('color','white');
+				$(this).parent("a").css('background','#4b5f7b');
+			}
+			else{
+				$(this).css('color','black');
+				$(this).parent("a").css('background','');
+			}
+			
+		});		
+	}
+}
+function initTreeMenu(isInit,tree){
+    var url;
+    var title;
+    var target;
+    var tabTitle;
+    var appcode;
+    var iconfont;
+    if(isInit){
+    	url='/aiko-ROOT/page/showImage.jsp';
+    	title='前端页面';
+    	target='';
+    	appcode='sort';
+    	iconfont='&#xe62a;';
+    }else{
+    	url=tree.data('url');
+    	title=tree.data('title');
+    	target=tree.data('target');
+    	appcode=tree.data('appcode');
+    	iconfont=tree.data('iconfont');
+    }
+    if($('.easyui-tabs').length>0){
+    	$('.easyui-tabs').tabs('closeAll');     
+    }            	
+    if(url!=''){
+    	if(target=='_blank'){
+    		window.open(url);
+    		return;
+    	}
+    	if(appcode=='main'){             		           		     	
+    		tabTitle='门户首页';
+    		if(!$("#pf-bd").hasClass("toggle")){//未收起
+    			 $('.toggle-icon').click();
+    		}    
+    		$('#pf-sider').remove();
+    		$('.easyui-tabs').hide();
+    		$('#main').show();
+    		$('#main').attr('src', $('#main').attr('src'));
+    	}else{//选择系统项 
+    		$('.easyui-tabs').show();
+    		$('#main').hide();
+    		$('#pf-bd').removeClass('toggle');
+    		$('#pf-sider').remove();
+    		
+    		tabTitle='首页';
+    		var pf_sider='<div id="pf-sider">'+
+		                   ' <h2 class="pf-model-name">'+
+		                   '     <span class="iconfont">'+iconfont+'</span>'+
+		                   '     <span class="pf-name">'+title+'</span>'+
+		                   '     <span class="toggle-icon"></span>'+
+		                   ' </h2>'+
+		                   '<ul class="side-menu" id="menu"> </ul>'+
+	                    '</div>';
+		                ;
+    		$('#pf-page').before(pf_sider);
+    		
+    		loadData(CONTEXT_PATH+'/aiko-ROOT/system/menus',{'appcode': appcode},function(data){
+    			var uiMenus = [];
+    			for(var i=0; i<data.length;i++){
+    				uiMenus.push(change2UIMenu(data[i]));
+    			}
+    			var topMenu = {id:"0",name:'<strong style="font-size:16px;color:#33aecc;letter-spacing:6px;">\u7CFB\u7EDF\u83DC\u5355</strong>',parentId:"-1",url:"",icon:"",isHeader:"1",childMenus:[]};
+    			topMenu.childMenus=uiMenus;
+    			initMenu([topMenu], $(".side-menu"));
+    			$(".side-menu > li").addClass("menu-item"); 
+    			//添加首页
+    			var tab='<iframe name="iframemain" class="page-iframe" src="' + url + '" data-id="' + url + '" frameborder="no"   border="no" height="100%" width="100%" scrolling="auto"></iframe>';
+    			$('.easyui-tabs').tabs('add',{
+    				tabHeight: 44,
+    	            title:tabTitle,
+    	            content:tab,
+    	            closable:false
+    	        });
+    			
+    			$(window).resize();
+    			
+    			//绑定tab页停留事件
+    			var curTab= $('ul.tabs').find('li.tabs-selected').first();
+    			curTab.attr('data-url',url);
+    			curTab.hover(function(){
+    				$("#curTabUrl").val($(this).data('url'));
+    				var offset=$(this).offset();
+    				var height=$(this).height();
+    				$(".pf-tab-panel").css({top:offset.top+height+'px',left:offset.left+'px'});
+    				$(".pf-tab-panel").show();	
+     			},function(){
+     				$(".pf-tab-panel").hide(); 
+     			});
+    			
+    		},true);            		
+    		
+    	}           	        
+    	
+	}else{
+		layer.alert('请配置应用的首页url');
+		return;
+	}
+  //清除之前选的菜单Tab
+	//closeTabsNoFirst();
+}

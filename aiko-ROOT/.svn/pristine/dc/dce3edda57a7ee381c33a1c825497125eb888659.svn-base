@@ -1,0 +1,292 @@
+package com.ycb.controller;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ycb.domain.details_list;
+import com.ycb.domain.details_listExample;
+import com.ycb.domain.details_listExample.Criteria;
+import com.ycb.service.details_listService;
+
+import chinapay.util.CommentedProperties;
+import chinapay.util.Config;
+import chinapay.util.Page;
+import chinapay.util.SafeProperties;
+
+
+/**
+ * gqf
+ * 操作AI产线配置文件
+ * @author Administrator
+ *
+ */
+@RequestMapping("/configuration")
+@Controller
+public class PCController {
+	private Logger log = Logger.getLogger(PCController.class);
+	
+	@Autowired
+	private details_listService details_listService;
+	
+
+
+    @RequestMapping("/resp")
+    public void resp(HttpServletRequest Request, HttpServletResponse response) throws Exception {
+    	
+    	response.sendRedirect("/aiko-ROOT/page/showImage.jsp");
+    }
+    
+	
+	@RequestMapping(value = "/user/list")
+	@ResponseBody
+	public Map<String, Object> selectList(HttpServletRequest request, HttpServletResponse response,int cPage,int pSize)
+			throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<String, Object>();
+		String sucees = "success";
+		List<details_list> list=null;
+		int totals=0;
+		try {
+	/*		details_listExample example=new details_listExample();  
+			Criteria  criteria = example.createCriteria();
+			criteria.andElIdEqualTo(979);*/
+			/*list=details_listService.selectByExample(example);*/
+			params = getParameterMap(request);
+			Page page=new Page();
+			page.setPageAndSize(cPage,pSize);
+			list = details_listService.findList(params,page.getCurrentPage(),page.getPageSize());
+			totals=details_listService.selectBycount(params);
+			
+		} catch (Exception e) {
+			log.error("selectList   error  :" + e);
+			sucees = "fial";
+		}
+		map.put("sucees", sucees);
+		map.put("data", list);
+		map.put("totals", totals);
+		return map;
+	}
+	
+	
+
+	@RequestMapping(value = "/UpdateConfiguration", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> UpdateConfiguration(HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		String sucees = "success";
+		String ABconfigpath = "";
+		try {
+			map = getParameterMap(request);
+			listMap = getParameterlistMap(request);
+			String ABconfig = map.get("ABconfig").toString();
+			if ("A".equals(ABconfig)) {
+				// 加载B配置文件
+				ABconfigpath = Config.getInstance().getValue("Aconfig");
+				updateConfig(ABconfigpath, listMap);
+			} else {
+				// 加载B配置文件
+				ABconfigpath = Config.getInstance().getValue("Bconfig");
+				updateConfig(ABconfigpath, listMap);
+			}
+
+		} catch (Exception e) {
+			log.error("configuration error  :" + e);
+			sucees = "fial";
+		}
+		map.put("sucees", sucees);
+
+		return map;
+	}
+	
+	@RequestMapping(value = "/deleteData", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteData(HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		String sucees = "success";
+		try {
+			map = getParameterMap(request);
+			details_listExample example=new details_listExample();  
+			Criteria  criteria = example.createCriteria();
+			criteria.andElIdEqualTo(Integer.parseInt(map.get("id").toString()));
+			details_listService.deleteByExample(example);
+		} catch (Exception e) {
+			log.error("deleteData  error  :" + e);
+			sucees = "fial";
+		}
+		map.put("sucees", sucees);
+
+		return map;
+}	
+	
+
+	/**
+	 * 读取配置文件
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/readConfig", method = RequestMethod.POST)
+	@ResponseBody
+	public List<Map<String, Object>> readConfig(HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		String ABconfigpath = "";
+		try {
+			map = getParameterMap(request);
+			String ABconfig = map.get("ABconfig").toString();
+			if ("A".equals(ABconfig)) {
+				// 加载A线配置文件
+				ABconfigpath = Config.getInstance().getValue("Aconfig");
+				listMap = getReadconfig(ABconfigpath, map);
+			} else {
+				// 加载B线配置文件
+				ABconfigpath = Config.getInstance().getValue("Bconfig");
+				listMap = getReadconfig(ABconfigpath, map);
+			}
+		} catch (Exception e) {
+			log.error("readConfig error  :" + e);
+		}
+		return listMap;
+	}
+
+	/**
+	 * 
+	 * 获取request<获取参数map>
+	 * 
+	 * @return 参数map
+	 * @throws Exception
+	 */
+	protected Map<String, Object> getParameterMap(HttpServletRequest request) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			@SuppressWarnings("unchecked")
+			Map<String, String[]> tempMap = request.getParameterMap();
+			Set<String> keys = tempMap.keySet();
+			for (String key : keys) {
+				byte source[] = request.getParameter(key).getBytes("UTF-8");
+				String modelname = new String(source, "UTF-8");
+				resultMap.put(key, modelname);
+			}
+		} catch (Exception e) {
+			log.error("getParameterMap error  :" + e);
+		}
+		return resultMap;
+	}
+
+	/**
+	 * 
+	 * listMap
+	 * 
+	 * @return 参数map
+	 * @throws Exception
+	 */
+	protected List<Map<String, Object>> getParameterlistMap(HttpServletRequest request) throws Exception {
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		try {
+			@SuppressWarnings("unchecked")
+			Map<String, String[]> tempMap = request.getParameterMap();
+			Set<String> keys = tempMap.keySet();
+			for (String key : keys) {
+				Map<String, Object> resultMap = new HashMap<String, Object>();
+				byte source[] = request.getParameter(key).getBytes("UTF-8");
+				String modelname = new String(source, "UTF-8");
+				resultMap.put(key, modelname);
+				listMap.add(resultMap);
+			}
+		} catch (Exception e) {
+			log.error("getParameterlistMap   error   :" + e);
+		}
+		return listMap;
+	}
+
+	/**
+	 * 获取配置文件里的所有值封装为map
+	 * 
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	protected List<Map<String, Object>> getReadconfig(String configPath, Map<String, Object> map) throws Exception {
+		List<Map<String, Object>> listMap = new ArrayList<Map<String, Object>>();
+		FileInputStream input = null;
+		try {
+			input = new FileInputStream(configPath);
+			SafeProperties safe = new SafeProperties();
+			safe.load(input);
+			for (Object key : safe.keySet()) {
+				Map<String, Object> resultMap = new HashMap<String, Object>();
+				resultMap.put(key.toString(), safe.getProperty(key.toString()));
+				listMap.add(resultMap);
+			}
+		} catch (Exception e) {
+			log.error("getReadconfig error  :" + e);
+		} finally {
+			if (input != null) {
+				input.close();
+			}
+		}
+		return listMap;
+	}
+
+	/**
+	 * 
+	 * 根绝页面的值 修改key
+	 * 
+	 * @param configPath
+	 * @param listMap
+	 * @throws Exception
+	 *             保证注释和顺序不变
+	 */
+	protected void updateConfig(String configPath, List<Map<String, Object>> listMap) throws Exception {
+		FileInputStream input = null;
+		FileOutputStream output = null;
+		try {
+			input = new FileInputStream(configPath);
+			CommentedProperties safe = new CommentedProperties();
+			safe.load(input, "utf-8");
+			for (Map<String, Object> map : listMap) {
+				for (Object obj : map.keySet()) {
+					safe.setProperty(new String(obj.toString().getBytes(), "utf-8"),
+							new String(map.get(obj).toString().getBytes(), "utf-8"));
+				}
+			}
+			output = new FileOutputStream(configPath);
+			safe.store(new OutputStreamWriter(output, "utf-8"));
+		} catch (Exception e) {
+			log.error("updateConfig    error  :" + e);
+		} finally {
+			if (input != null) {
+				input.close();
+			}
+			if (output != null) {
+				output.close();
+			}
+		}
+	}
+	
+	
+	
+
+}

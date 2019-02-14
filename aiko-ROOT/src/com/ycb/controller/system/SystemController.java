@@ -1,0 +1,224 @@
+package com.ycb.controller.system;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ycb.util.AjaxObject;
+import com.ycb.util.CacheTree;
+
+@Controller 
+public class SystemController {
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
+	
+//	//应用首页
+//	@RequestMapping(value="/system/main")
+//	public String index() {
+//		//return "system/index";
+////		return "system/main.html";
+//		return "a";
+//	}
+	
+	//门户
+	@RequestMapping(value="/system/workbench")
+	public String workbench() {
+		return "system/workbench";
+	}
+	
+	//展现登录用户个人信息
+	@RequestMapping(value="/system/userinfo")
+	public String userinfo() {
+		return "system/userinfo";
+	}
+		
+	
+	
+	//获取应用菜单
+	@RequestMapping(value = "/system/menus")
+	@ResponseBody
+	public AjaxObject menus(@RequestParam(name = "appcode", required = true) String appcode) {
+		AjaxObject returnVal = new AjaxObject();
+		try {
+			/*
+			 * 从session中获取登录用户菜单信息
+			 */
+//			List<Map<Object, Object>> menus = SystemApi.getCurrentMenusByAppCode(appcode);
+			List<Map<Object, Object>> menus = new ArrayList<>();
+			Map<Object, Object> menu1 = new HashMap<>();
+			Map<Object, Object> menu2 = new HashMap<>();
+			Map<Object, Object> menu3 = new HashMap<>();
+			Map<Object, Object> menu4 = new HashMap<>();
+			Map<Object, Object> menu5 = new HashMap<>();
+			Map<Object, Object> menu6 = new HashMap<>();
+			Map<Object, Object> menu7 = new HashMap<>();
+			Map<Object, Object> menu8 = new HashMap<>();
+			if(appcode.equals("sort")) {//前端页面
+				menu1.put("code", "zhienngfenxuan");
+				menu1.put("level", "1");
+				menu1.put("type", "menu");
+				menu1.put("parentid", "0");
+				menu1.put("url", "");
+				menu1.put("name", "AB产线");
+				menu1.put("id", "1");
+				menu1.put("oauth", "1");
+				menu1.put("status", "1");
+				
+				menu2.put("code", "aLine");
+				menu2.put("level", "1-2");
+				menu2.put("type", "menu");
+				menu2.put("parentid", "1");
+				menu2.put("url", "/aiko-ROOT/page/showImageA.jsp");
+				menu2.put("name", "A线页面");
+				menu2.put("id", "2");
+				menu2.put("oauth", "1");
+				menu2.put("status", "1");
+				
+				menu3.put("code", "bLine");
+				menu3.put("level", "1-3");
+				menu3.put("type", "menu");
+				menu3.put("parentid", "1");
+				menu3.put("url", "/aiko-ROOT/page/showImageB.jsp");
+				menu3.put("name", "B线页面");
+				menu3.put("id", "3");
+				menu3.put("oauth", "1");
+				menu3.put("status", "1");
+
+				menus.add(menu1);
+				menus.add(menu2);
+				menus.add(menu3);
+			}else if(appcode.equals("system")) {
+				menu1.put("code", "zhienngfenxuan");
+				menu1.put("level", "1");
+				menu1.put("type", "menu");
+				menu1.put("parentid", "0");
+				menu1.put("url", "");
+				menu1.put("name", "AB产线");
+				menu1.put("id", "1");
+				menu1.put("oauth", "1");
+				menu1.put("status", "1");
+				
+				menu2.put("code", "aLine");
+				menu2.put("level", "1-2");
+				menu2.put("type", "menu");
+				menu2.put("parentid", "1");
+				menu2.put("url", "/aiko-ROOT/page/configAList.jsp");
+				menu2.put("name", "A线配置");
+				menu2.put("id", "2");
+				menu2.put("oauth", "1");
+				menu2.put("status", "1");
+				
+				menu3.put("code", "bLine");
+				menu3.put("level", "1-3");
+				menu3.put("type", "menu");
+				menu3.put("parentid", "1");
+				menu3.put("url", "/aiko-ROOT/page/configBList.jsp");
+				menu3.put("name", "B线配置");
+				menu3.put("id", "3");
+				menu3.put("oauth", "1");
+				menu3.put("status", "1");
+
+				menu4.put("code", "bLine");
+				menu4.put("level", "1-4");
+				menu4.put("type", "menu");
+				menu4.put("parentid", "1");
+				menu4.put("url", "/aiko-ROOT/page/alarmAList.jsp");
+				menu4.put("name", "A线报警");
+				menu4.put("id", "4");
+				menu4.put("oauth", "1");
+				menu4.put("status", "1");
+
+				menu5.put("code", "bLine");
+				menu5.put("level", "1-5");
+				menu5.put("type", "menu");
+				menu5.put("parentid", "1");
+				menu5.put("url", "/aiko-ROOT/page/alarmBList.jsp");
+				menu5.put("name", "B线报警");
+				menu5.put("id", "5");
+				menu5.put("oauth", "1");
+				menu5.put("status", "1");
+
+				menu6.put("code", "chanpinqiehuan");
+				menu6.put("level", "6");
+				menu6.put("type", "menu");
+				menu6.put("parentid", "0");
+				menu6.put("url", "");
+				menu6.put("name", "产品切换");
+				menu6.put("id", "6");
+				menu6.put("oauth", "1");
+				menu6.put("status", "1");
+				
+				menu7.put("code", "bLine");
+				menu7.put("level", "6-7");
+				menu7.put("type", "menu");
+				menu7.put("parentid", "6");
+				menu7.put("url", "/aiko-ROOT/page/productA.jsp");
+				menu7.put("name", "A线产品切换");
+				menu7.put("id", "7");
+				menu7.put("oauth", "1");
+				menu7.put("status", "1");
+				
+				menu8.put("code", "bLine");
+				menu8.put("level", "6-8");
+				menu8.put("type", "menu");
+				menu8.put("parentid", "6");
+				menu8.put("url", "/aiko-ROOT/page/productB.jsp");
+				menu8.put("name", "B线产品切换");
+				menu8.put("id", "8");
+				menu8.put("oauth", "1");
+				menu8.put("status", "1");
+
+
+				menus.add(menu1);
+				menus.add(menu2);
+				menus.add(menu3);
+				menus.add(menu4);
+				menus.add(menu5);
+				menus.add(menu6);
+				menus.add(menu7);
+				menus.add(menu8);
+			}
+			Iterator<Map<Object, Object>> iter = menus.iterator();
+			Map<Object, Object> menu = null;
+			while (iter.hasNext()) {
+				menu = iter.next();
+				if("function".equals(menu.get("type"))){
+					iter.remove();
+				}
+			}
+			
+			// 对菜单信息进行树排序
+			CacheTree<Map<Object, Object>> tree = new CacheTree<Map<Object, Object>>("id", "parentid", "sort", menus);
+			tree.setChilds("0", "childs");
+			menus = tree.getChilds("0");
+			returnVal.success(menus);
+		} catch (Throwable e) {
+			logger.error("登陆后加载菜单树的过程中出现异常", e);
+			returnVal.fail();
+		}
+		return returnVal;
+	}
+	 
+	//根据appcod获取应用信息
+	@RequestMapping(value = "/system/app")
+	@ResponseBody
+	public AjaxObject getAppByCode(@RequestParam(name = "appcode", required = true) String appcode) {
+		AjaxObject returnVal = new AjaxObject();
+		try {
+			
+		} catch (Throwable e) {
+			logger.error("加载应用信息过程中出现异常", e);
+			returnVal.fail();
+		}
+		return returnVal;
+	}
+}
